@@ -38,21 +38,23 @@ If a command fails, a `CommandError` instance is returned, providing detailed in
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/kgs19/cmdx"
 	"log"
 )
 
 func main() {
-	err := cmdx.RunCommandPrintOutput("command1.sh")
-	if cmdErr, ok := err.(*cmdx.CommandError); ok {
+	err := cmdx.RunCommandPrintOutput("ls", "/non_existent_file.txt")
+	var cmdErr *cmdx.CommandError
+	if errors.As(err, &cmdErr) {
 		fmt.Printf("Command failed with exit code %d\n", cmdErr.ExitCode)
 		fmt.Printf("Error message: %s\n", cmdErr.ErrorMsg)
+		fmt.Printf("Execution directory: %s\n", cmdErr.CmdDir)
 	} else if err != nil {
 		log.Fatalf("Unexpected error: %v", err)
 	}
 }
-
 ```
 
 ### Usage Examples
